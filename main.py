@@ -3,7 +3,7 @@ import random
 import pandas as pd
 import matplotlib.pyplot as plt
 
-RANDOM_SEED = 42
+RANDOM_SEED = 1071
 SIM_TIME = 120
 LAMBDA = 2.0
 MU = 0.8
