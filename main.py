@@ -53,7 +53,7 @@ def arrival_generator(env, checkpoint_container):
 
 def disruption_manager(env, checkpoint_container):
     yield env.timeout(40)
-    print("--- DISRUPTION START: 3 LANES CLOSED ---")
+    print("DISRUPTION START: 3 LANES CLOSED")
     #checkpoint_container['resource'] = simpy.Resource(env, capacity=1)
     # Store the 'claims' on the lanes so we can release them later
     staff_claims = []
@@ -63,33 +63,28 @@ def disruption_manager(env, checkpoint_container):
         staff_claims.append(req)
         yield req  # The staff now 'occupies' the lane
         yield env.timeout(40)
-    print("--- DISRUPTION END: LANES REOPENED ---")
+    print("DISRUPTION END: LANES REOPENED")
     #checkpoint_container['resource'] = simpy.Resource(env, capacity=4)
     for req in staff_claims:
         checkpoint_container['resource'].release(req)
 
-print("--- STARTING SECURITY CHECKPOINT SIMULATION ---")
+print("STARTING SECURITY CHECKPOINT SIMULATION")
 random.seed(RANDOM_SEED)
 env = simpy.Environment()
 checkpoint_container = {'resource': simpy.PriorityResource(env, capacity=NUM_LANES)}
 env.process(arrival_generator(env, checkpoint_container))
 env.process(disruption_manager(env, checkpoint_container))
-# New: Start the camera
 env.process(queue_monitor(env, checkpoint_container))
 env.run(until=SIM_TIME)
 
-
-# Convert our list of dictionaries into a clean Table (DataFrame)
 df = pd.DataFrame(performance_log)
 
-# Calculate the Average Wait Time
 avg_wait = df['wait'].mean()
 max_wait = df['wait'].max()
 
 #print("SIMULATION COMPLETE")
 #print("Average Wait Time: " + str(round(avg_wait, 2)) + " minutes")
 #print("Maximum Wait Time: " + str(round(max_wait, 2)) + " minutes")
-
 
 # 1. Create a table for the Queue Length history
 df_q = pd.DataFrame(queue_history)
@@ -115,7 +110,7 @@ baseline_wait = df[df['arrival'] < 40]['wait'].mean()
 # We sum the wait times that occurred after the disruption started
 total_extra_wait = df[df['arrival'] >= 40]['wait'].sum()
 
-print("--- RESILIENCE METRICS ---")
+print("RESILIENCE METRICS:")
 print("Total Extra Wait Time (Person-Minutes): " + str(round(total_extra_wait, 2)))
 # 5. Show the Graph
 plt.show()

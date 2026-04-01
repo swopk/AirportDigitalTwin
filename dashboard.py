@@ -2,14 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 1. Load and Clean Data
 df = pd.read_csv('airport_stats.csv')
 
-# Define time intervals
 T_START = 40
 T_END = 80
 
-# 2. Calculate Resilience Metrics
 # Split data into phases
 baseline = df[df['arrival'] < T_START]
 disruption = df[(df['arrival'] >= T_START) & (df['arrival'] < T_END)]
@@ -20,12 +17,11 @@ avg_base = baseline['wait'].mean()
 avg_disrupt = disruption['wait'].mean()
 avg_recovery = recovery['wait'].mean()
 
-# Quantify Resilience: "Person-Minutes of Delay"
 # We compare actual wait times to the baseline average
 df['extra_wait'] = (df['wait'] - avg_base).clip(lower=0)
 resilience_loss = df[df['arrival'] >= T_START]['extra_wait'].sum()
 
-# 3. Create Dashboard Visuals
+
 plt.figure(figsize=(12, 10))
 
 # Plot A: Wait Time Distribution
@@ -53,7 +49,7 @@ plt.tight_layout()
 plt.savefig('twin_dashboard.png')
 plt.show()
 
-#  4. Print Summary Report
+#  Summary
 print(f"DIGITAL TWIN PERFORMANCE REPORT")
 print(f"Baseline Avg Wait: {avg_base:.2f} min")
 print(f"Disruption Avg Wait: {avg_disrupt:.2f} min")
