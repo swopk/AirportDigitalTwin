@@ -17,7 +17,7 @@ avg_base = baseline['wait'].mean()
 avg_disrupt = disruption['wait'].mean()
 avg_recovery = recovery['wait'].mean()
 
-# We compare actual wait times to the baseline average
+# compare actual wait times to the baseline average
 df['extra_wait'] = (df['wait'] - avg_base).clip(lower=0)
 resilience_loss = df[df['arrival'] >= T_START]['extra_wait'].sum()
 

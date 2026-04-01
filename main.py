@@ -19,7 +19,6 @@ def passenger(env, name, checkpoint_container):
         
         wait_time = env.now - arrival_time
         #print(name + " started screening at " + str(round(env.now, 2)) + " (Wait: " + str(round(wait_time, 2)) + ")")
-        # Log the data into our list
         performance_log.append({
             'name': name,
             'arrival': arrival_time,
@@ -32,9 +31,9 @@ def passenger(env, name, checkpoint_container):
         #print(name + " finished at " + str(round(env.now, 2)))
 def queue_monitor(env, checkpoint_container):
     while True:
-    # Look at how many people are currently in the 'queue'
+    #how many people are currently in the 'queue'
         current_wait_count = len(checkpoint_container['resource'].queue)
-    # Record the time and the count
+    # Record time and count
         queue_history.append({
         'time': env.now,
         'queue_length': current_wait_count
@@ -55,13 +54,13 @@ def disruption_manager(env, checkpoint_container):
     yield env.timeout(40)
     print("DISRUPTION START: 3 LANES CLOSED")
     #checkpoint_container['resource'] = simpy.Resource(env, capacity=1)
-    # Store the 'claims' on the lanes so we can release them later
+    # Store claims on the lanes to release them later
     staff_claims = []
     for i in range(3):
-        # priority=-1 makes the staff 'jump' to the front of the line
+        # priority=-1 makes the staff 'jump' to the front of line
         req = checkpoint_container['resource'].request(priority=-1)
         staff_claims.append(req)
-        yield req  # The staff now 'occupies' the lane
+        yield req  #staff now occupies the lane
         yield env.timeout(40)
     print("DISRUPTION END: LANES REOPENED")
     #checkpoint_container['resource'] = simpy.Resource(env, capacity=4)
@@ -103,11 +102,11 @@ plt.ylabel('Passengers in Line')
 plt.legend()
 plt.grid(True)
 
-# Calculate the 'Baseline' wait (Average wait before minute 40)
+# Calculate the Baseline wait (Average wait before minute 40)
 baseline_wait = df[df['arrival'] < 40]['wait'].mean()
 
-# Calculate the 'Disruption Impact'
-# We sum the wait times that occurred after the disruption started
+# Calculate the Disruption Impact
+# sum the wait times that occurred after the disruption started
 total_extra_wait = df[df['arrival'] >= 40]['wait'].sum()
 
 print("RESILIENCE METRICS:")
